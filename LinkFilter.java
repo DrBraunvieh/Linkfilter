@@ -13,12 +13,11 @@ import java.io.FileNotFoundException;
 public class LinkFilter{
     private static final String FILE_NOT_FOUND    = "Die angegebene Datei konnte nicht gefunden werden.";
     private static final String NO_FILE_SPECIFIED = "Sie haben keine Datei angegeben auf der die Methode arbeiten soll.";
-    private static final String REGULAR_EXPRESSION = "<a href=\"http://www.[a-z]*.[a-z]*\">[a-z]*</a>";
+    private static final String REGULAR_EXPRESSION = "<a href=\"http?://*www.*.*\">*";
     
     public static void main(String[] args){
         boolean weitermachen = true;
         int numberOfLine = 0;
-        boolean hasFound;
         String currentLine;
         int anfangURL;
         int endeURL;
@@ -31,14 +30,16 @@ public class LinkFilter{
                 currentLine = file.nextLine();
                 numberOfLine++;
                 Matcher match = regex.matcher(currentLine);
-                hasFound = match.find();
                 anfangURL = currentLine.indexOf("=\"");
                 endeURL = currentLine.indexOf("\">");
                 endeName = currentLine.indexOf("</a>");
-                if(hasFound == true){
-                    System.out.println(currentLine.substring(endeURL, endeName) + ": " + currentLine.substring(anfangURL, endeURL));
+                
+                if(match.find()){
+                    System.out.println(numberOfLine + ": " + currentLine.substring(endeURL + 2, endeName) + ": " 
+                                     + currentLine.substring(anfangURL + 2, endeURL));
                 }
-                if(file.hasNextLine() == false){
+                
+                if(!file.hasNextLine()){
                     weitermachen = false;
                 }
             }
